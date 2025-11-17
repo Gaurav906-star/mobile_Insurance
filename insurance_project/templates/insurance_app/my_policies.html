@@ -1,0 +1,71 @@
+{% extends "./basic.html" %} {# Assuming you have a base template for navigation
+and styling #} {% block title %}My Active Policies{% endblock %} {# Assuming you
+have a base template for navigation and styling #} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">🛡️ My Insurance Contracts</h2>
+
+  {% if customer_policies %}
+  <div class="list-group">
+    {% for contract in customer_policies %}
+    <div
+      class="list-group-item list-group-item-action mb-3 shadow-sm {% if contract.status == 'ACTIVE' %}list-group-item-success{% else %}list-group-item-secondary{% endif %}"
+    >
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">
+          {{ contract.policy.name }}
+          <span
+            class="badge {% if contract.status == 'ACTIVE' %}bg-success{% elif contract.status == 'EXPIRED' %}bg-danger{% else %}bg-warning{% endif %}"
+          >
+            {{ contract.status }}
+          </span>
+        </h5>
+        <small class="text-muted">Contract ID: #{{ contract.id }}</small>
+      </div>
+
+      <p class="mb-1">
+        <strong>Device Covered:</strong>
+        {{ contract.device.brand }} {{ contract.device.model }}
+         ({{contract.device.name }})
+      </p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <small>
+            <strong>Start Date:</strong> {{ contract.start_date|date:"F j, Y" }}
+          </small>
+        </div>
+        <div class="col-md-6">
+          <small>
+            <strong>End Date:</strong> {{ contract.end_date|date:"F j, Y" }}
+          </small>
+        </div>
+      </div>
+
+      <hr class="my-2" />
+
+      <p class="small text-muted mb-1">
+        **Monthly Premium: {{contract.policy.monthly_premium}}**
+      </p>
+      <ul class="list-unstyled small">
+        <li>Deductible: €{{ contract.policy.deductible }}</li>
+        <li>Max Payout: €{{ contract.policy.max_coverage_limit }}</li>
+      </ul>
+
+      {% if contract.status == 'ACTIVE' %}
+      <a href="{% url 'claim_submit' %}" class="btn btn-sm btn-primary mt-2">
+        File a Claim
+      </a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    You don't have any purchased policies yet.
+    <a href="{% url 'insurance_app:policy_list' %}" class="alert-link"
+      >Browse our plans here!</a
+    >
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}

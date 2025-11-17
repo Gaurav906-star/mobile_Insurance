@@ -1,0 +1,19 @@
+/* Custom CSS to enforce 70% viewport height */
+.carousel-70vh {
+    /* Sets the height of the carousel container to 70% of the viewport height */
+    height: 70vh; 
+    overflow: hidden; /* Prevents content spillover */
+}
+
+.carousel-70vh .carousel-inner,
+.carousel-70vh .carousel-item {
+    /* Ensure inner elements also adhere to the 70vh height */
+    height: 100%; 
+}
+
+.carousel-70vh .carousel-item img {
+    /* Crucial: Images must cover the container without stretching */
+    height: 100%; 
+    width: 100%;
+    object-fit: cover; /* Crops the image to fit the container while maintaining aspect ratio */
+}

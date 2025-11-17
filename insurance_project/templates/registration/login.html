@@ -1,0 +1,47 @@
+{% extends "../insurance_app/basic.html" %} {% load crispy_forms_tags %} {# mmm
+mmmm #} {% block title %} User Login {% endblock %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-lg p-4">
+        <h3 class="card-title text-center mb-4">🔐 Login to MobiShield</h3>
+
+        {% if form.errors and not form.non_field_errors %}
+        <div class="alert alert-danger">
+          Your username and password didn't match. Please try again.
+        </div>
+        {% endif %} {% if form.non_field_errors %} {# mmm mmmm mmm mmmmm mmmmm
+        mmmmm #} {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %} {% endif %}
+
+        <form method="post">
+          {% csrf_token %} {{ form|crispy }}
+
+          <button type="submit" class="btn btn-primary w-100 mt-4">
+            Login
+          </button>
+          <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+
+        <div class="text-center mt-3 small">
+          <p class="mb-1">
+            <a href="{% url 'password_reset' %}" class="text-decoration-none">
+              Forgot your password?
+            </a>
+          </p>
+          <p>
+            Don't have an account?
+            <a
+              href="{% url 'signup' %}"
+              class="text-success text-decoration-none"
+            >
+              Sign Up
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

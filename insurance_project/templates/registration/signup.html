@@ -1,0 +1,35 @@
+{% extends "../insurance_app/basic.html" %} {% load crispy_forms_tags %}
+{#=================================================================================#}{%
+block title %}{#=======================================#}User Sign
+Up{#=======================================#}{% endblock
+%}{#=======================================#} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-lg p-4">
+        <h3 class="card-title text-center mb-4">
+          Create Your MobiShield Account
+        </h3>
+
+        <form method="post">
+          {% csrf_token %} {% if form.non_field_errors %} {# end for if
+          ====================================================================#}
+          {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">{{ error }}</div>
+          {% endfor %} {% endif %} {{ form|crispy}}
+          <button type="submit" class="btn btn-success w-100 mt-4">
+            Sign Up
+          </button>
+        </form>
+
+        <div class="text-center mt-3 small">
+          Already have an account?
+          <a href="{% url 'login' %}" class="text-primary text-decoration-none">
+            Login
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

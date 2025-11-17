@@ -1,0 +1,85 @@
+{% extends "./basic.html" %} 
+
+{% block title %}My Claim History{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">⏳ My Submitted Claims</h2>
+
+    {# NOTE: 'claims' changed to 'my_claims' to match context_object_name from ListView #}
+    {% if my_claims %}
+    <div class="list-group">
+        {% for claim in my_claims %}
+            
+            {% comment %} 
+            Define default variables before status check (for 'DR' or unknown status)
+            {% endcomment %}
+            {% with alert_class="list-group-item-info" badge_class="bg-secondary" %}
+
+                {# Override classes based on specific status codes #}
+                {% if claim.status == 'AP' %}
+                    {% with alert_class="list-group-item-success" badge_class="bg-success" %} {% endwith %}
+                {% elif claim.status == 'RJ' %}
+                    {% with alert_class="list-group-item-danger" badge_class="bg-danger" %} {% endwith %}
+                {% elif claim.status == 'RV' %}
+                    {% with alert_class="list-group-item-warning" badge_class="bg-warning" %} {% endwith %}
+                {% endif %}
+
+                <div
+                    class="list-group-item list-group-item-action mb-3 shadow-sm {{ alert_class }}"
+                >
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <h5 class="mb-1">
+                            Claim #{{ claim.id }}
+                            <span class="badge {{ badge_class }}">
+                                {# get_status_display translates the code (e.g., 'AP') to the human-readable value (e.g., 'Approved') #}
+                                {{ claim.get_status_display }}
+                            </span>
+                        </h5>
+                        <small>Submitted: {{ claim.submission_date|date:"M j, Y H:i" }}</small>
+                    </div>
+
+                    <p class="mb-1">
+                        <strong>Policy:</strong> {{ claim.customer_policy.policy.name }} 
+                        ({{claim.customer_policy.device.brand }} 
+                        {{claim.customer_policy.device.model }})
+                    </p>
+
+                    <p class="small mb-1">
+                        <strong>Incident Date:</strong> {{ claim.incident_date|date:"M j, Y" }}
+                    </p>
+
+                    <p class="small text-muted border-top pt-2">
+                        <strong>Incident Description:</strong> {{ claim.incident_description|truncatechars:150 }}
+                    </p>
+
+                    <div class="row border-top pt-2 mt-2">
+                        <div class="col-md-4">
+                            <strong>Repair Cost Est.:</strong> €{{ claim.estimated_repair_cost }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Deductible:</strong> €{{ claim.deductible_amount }}
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if claim.claim_amount_approved %} 
+                                <strong>Approved Payout:</strong>
+                                <span class="text-success">€{{ claim.claim_amount_approved }}</span>
+                            {% else %} 
+                                <strong>Approved Payout:</strong>
+                                <span class="text-muted">N/A (Pending)</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            {% endwith %} {# Closes the 'with alert_class...' block #}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        You have not submitted any claims yet.
+        <a href="{% url 'claim_submit' %}" class="alert-link">File your first claim here.</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

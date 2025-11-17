@@ -1,0 +1,62 @@
+{% extends "./basic.html" %} {# Assuming you have a base template for navigation
+and styling #} {% block title %}Available Insurance Plans{% endblock %} {# End
+Block seperation#} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">💰 Browse Our Mobile Insurance Plans</h2>
+  <p class="lead">
+    Select a plan below to see coverage details and proceed to purchase.
+  </p>
+
+  {% if policies %}
+  <div class="row">
+    {% for policy in policies %}
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">{{ policy.name }}</h4>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <p class="card-text text-muted">{{ policy.description }}</p>
+
+          <div class="row mb-3">
+            <div class="col-6">
+              <small class="text-success">Monthly Premium:</small>
+              <h5>€{{ policy.monthly_premium }}</h5>
+            </div>
+            <div class="col-6 text-end">
+              <small class="text-danger">Deductible:</small>
+              <h5>€{{ policy.deductible }}</h5>
+            </div>
+          </div>
+
+          <ul class="list-unstyled mb-4">
+            <li>
+              <i class="bi bi-check-circle-fill text-success me-2"></i>
+              Max Coverage Limit: €{{ policy.max_coverage_limit }}
+            </li>
+            <li>
+              <i class="bi bi-info-circle-fill text-info me-2"></i>
+              Plan ID: #{{ policy.id }}
+            </li>
+          </ul>
+
+          <div class="mt-auto">
+            <a
+              href="{% url 'policy_purchase' %}?policy_id={{ policy.id }}"
+              class="btn btn-primary w-100"
+            >
+              Select and Purchase
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-warning" role="alert">
+    No active insurance policies are available for purchase at this time.
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}
