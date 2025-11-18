@@ -10,6 +10,9 @@ from datetime import date, timedelta
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.conf import settings
+import boto3
+from pdflibSDK.pdflib import generate_policy_pdf
+from storages.backends.s3 import S3Storage
 
 class PolicyListView(ListView):
 
@@ -35,12 +38,17 @@ class PolicyPurchaseView(LoginRequiredMixin, CreateView):
   
   def form_valid(self, form):
     form.instance.user = self.request.user
-    form.instance.start_date = date.today()
-    form.instance.end_date = date.today()+timedelta(days=365)
+    response = super().form_valid(form)
+    customer_policy = form.instance
+    policy_doc_file = generate_policy_pdf(customer_policy)
+    user_pk = str(self.request.user.pk)
+    policy_pk = str(customer_policy.pk)
+    s3_key = f"documents/{user_pk}/{policy_pk}.pdf"
+    storage = S3Storage()
+    storage.save(s3_key, policy_doc_file)
+    
 
-    form.instance.status = 'ACTIVE'
-
-    return super().form_valid(form)
+    return response
   
 class DeviceRegisterView(LoginRequiredMixin, CreateView):
   model = Device

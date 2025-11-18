@@ -97,6 +97,12 @@ DATABASES = {
 }
 
 
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -154,12 +160,22 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 import os
 STATIC_URL = 'static/'
 
-# Define the location(s) of your static files outside of an app folder
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'storages.backends.s3.S3StaticStorage'
+STATICFILES_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{STATICFILES_LOCATION}/'
+
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+MEDIAFILES_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/{MEDIAFILES_LOCATION}/'
 
 
 LOGGING = {
